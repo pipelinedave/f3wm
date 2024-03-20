@@ -1,0 +1,49 @@
+- name: Set up i3wm and polybar with configs
+  hosts: localhost
+  tasks:
+    - name: Ensure i3wm and polybar are installed
+      become: yes
+      dnf:
+        name:
+          - i3
+          - polybar
+        state: present
+    
+    - name: Ensure i3 config directory exists
+      file:
+        path: "~/.config/i3"
+        state: directory
+
+    - name: Ensure polybar config directory exists
+      file:
+        path: "~/.config/polybar"
+        state: directory
+
+    - name: Copy i3wm config files
+      ansible.builtin.copy:
+        src: "roles/i3wm/files/"
+        dest: "~/.config/i3/"
+        directory_mode: '0755'
+        mode: '0644'
+        remote_src: no
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+      delegate_to: localhost
+    
+    - name: Copy polybar config files
+      ansible.builtin.copy:
+        src: "roles/polybar/files/"
+        dest: "~/.config/polybar/"
+        directory_mode: '0755'
+        mode: '0644'
+        remote_src: no
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+      delegate_to: localhost
+    
+    - name: Ensure .bashrc is in place
+      ansible.builtin.copy:
+        src: "roles/bash/files/.bashrc"  # Adjust for where you keep your .bashrc file
+        dest: "~/.bashrc"
+        mode: '0644'
+
