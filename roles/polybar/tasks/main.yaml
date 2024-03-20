@@ -1,0 +1,23 @@
+- name: Install polybar
+  dnf:
+    name:
+      - polybar
+    state: present
+  become: yes
+
+- name: Ensure polybar config directory exists
+  file:
+    path: "~/.config/polybar"
+    state: directory
+
+- name: Copy polybar config files
+  ansible.builtin.copy:
+    src: "roles/polybar/files/"
+    dest: "~/.config/polybar/"
+    directory_mode: '0755'
+    mode: '0644'
+    remote_src: no
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+  delegate_to: localhost
+  

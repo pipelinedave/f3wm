@@ -1,0 +1,5 @@
+- name: Ensure .bashrc is in place
+  ansible.builtin.copy:
+    src: "roles/bash/files/.bashrc"  # Adjust for where you keep your .bashrc file
+    dest: "~/.bashrc"
+    mode: '0644'

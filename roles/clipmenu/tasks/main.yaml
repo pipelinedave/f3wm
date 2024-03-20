@@ -1,0 +1,42 @@
+- name: Install required packages for clipmenu and clipnotify
+  dnf:
+    name:
+      - libXfixes-devel
+      - libX11-devel
+    state: present
+  become: yes
+
+- name: Clone clipnotify from GitHub
+  git:
+    repo: 'https://github.com/cdown/clipnotify.git'
+    dest: '~/clipnotify'
+    clone: yes
+    update: yes
+
+- name: Compile and install clipnotify
+  make:
+    chdir: '~/clipnotify'
+    target: install
+  become: yes
+
+- name: Clone clipmenu from GitHub
+  git:
+    repo: 'https://github.com/cdown/clipmenu.git'
+    dest: '~/clipmenu'
+    clone: yes
+    update: yes
+
+- name: Compile and install clipmenu
+  make:
+    chdir: '~/clipmenu'
+    target: install
+  become: yes
+
+- name: Enable and start clipmenud service for current user
+  systemd:
+    name: clipmenud
+    state: started
+    enabled: yes
+    scope: user
+    daemon_reload: yes
+
