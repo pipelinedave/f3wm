@@ -19,5 +19,4 @@
     remote_src: no
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
-    delegate_to: localhost
  

@@ -92,7 +92,7 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 # Window Management
 ###############################
 # Start a terminal
-bindsym $mod+Return exec konsole
+bindsym $mod+Return exec alacritty
 
 # Kill focused window
 bindsym $mod+q kill

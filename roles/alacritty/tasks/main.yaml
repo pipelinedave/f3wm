@@ -1,0 +1,18 @@
+- name: Install Alacritty
+  dnf:
+    name: alacritty
+    state: present
+  become: yes
+
+- name: Ensure Alacritty config directory exists
+  file:
+    path: "~/.config/alacritty"
+    state: directory
+    mode: '0755'
+
+- name: Copy Alacritty config file
+  ansible.builtin.copy:
+    src: "roles/alacritty/files/alacritty.toml"
+    dest: "~/.config/alacritty/alacritty.toml"
+    mode: '0644'
+
