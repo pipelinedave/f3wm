@@ -13,6 +13,8 @@ export PATH
 
 export GTK_USE_PORTAL=1
 
+export PS1="\[\033[01;33m\]\u@\h \W\$\[\033[00m\] "
+
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
