@@ -21,11 +21,13 @@ Follow these steps to get your environment set up:
    ```bash
    git clone https://yourrepositoryurl.com/f3wm.git
    cd f3wm
+   ```
 
 2.Run the Ansible playbook:
 
    ```bash
    ansible-playbook --ask-become-pass playbook.yml
+   ```
 
 This step will install i3wm, Polybar, and place all the necessary configuration files in their rightful places. It will ask for your sudo password - that's your key to the backstage.
 
