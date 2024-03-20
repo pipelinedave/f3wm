@@ -4,7 +4,8 @@ green = "0xb5bd68"
 red = "0xF0C674"
 
 [colors.primary]
-background = "0x282A2E"
+#background = "0x282A2E"
+background = "0x000000"
 foreground = "0xC5C8C6"
 
 [font]
