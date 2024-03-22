@@ -1,8 +1,11 @@
 - name: Install required packages for clipmenu and clipnotify
   dnf:
     name:
+      - gcc
+      - make
       - libXfixes-devel
       - libX11-devel
+      - xsel
     state: present
   become: yes
 
@@ -12,6 +15,7 @@
     dest: '~/clipnotify'
     clone: yes
     update: yes
+  become: yes
 
 - name: Compile and install clipnotify
   make:
@@ -25,6 +29,7 @@
     dest: '~/clipmenu'
     clone: yes
     update: yes
+  become: yes
 
 - name: Compile and install clipmenu
   make:

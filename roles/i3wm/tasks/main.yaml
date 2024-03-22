@@ -5,15 +5,10 @@
     state: present
   become: yes
 
-- name: Ensure i3 config directory exists
-  file:
-    path: "~/.config/i3"
-    state: directory
-
 - name: Copy i3wm config files
   ansible.builtin.copy:
     src: "roles/i3wm/files/"
-    dest: "~/.config/i3/"
+    dest: "~/.config/"
     directory_mode: '0755'
     mode: '0644'
     remote_src: no

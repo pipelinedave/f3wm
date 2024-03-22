@@ -4,16 +4,10 @@
     state: present
   become: yes
 
-- name: Ensure Neovim config directory exists
-  file:
-    path: "~/.config/nvim"
-    state: directory
-    mode: '0755'
-
 - name: Copy Neovim config files
   ansible.builtin.copy:
     src: "roles/neovim/files/"
-    dest: "~/.config/nvim/"
+    dest: "~/.config/"
     directory_mode: '0755'
     mode: '0644'
     remote_src: no
