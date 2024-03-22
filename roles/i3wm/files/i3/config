@@ -25,7 +25,7 @@ exec --no-startup-id dex-autostart --autostart --environment i3
 # System Utilities
 ###############################
 # Lock screen before suspend
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork --color 000000
 # NetworkManager system tray GUI
 exec --no-startup-id nm-applet
 # Bluetooth applet
@@ -156,9 +156,7 @@ bindsym XF86MonBrightnessDown exec light -U 5
 ###############################
 # Screenshot
 ###############################
-#bindsym $mod+Shift+s exec scrot -s '%Y-%m-%d_%H%M%S_$wx$h.png' -e 'mv $f ~/Downloads/'
-bindsym $mod+Shift+s exec "scrot -s '%Y-%m-%d_%H%M%S.png' -e 'mv $f ~/Downloads/'"
-
+bindsym $mod+Shift+s exec "maim -s | tee ~/Downloads/$(date +%Y-%m-%d_%H%M%S).png"
 
 ###############################
 # Status Bar Configuration
@@ -186,7 +184,8 @@ for_window [all] border pixel 1
 gaps inner 8
 # Colors
 # class                 border      backgr.    text      indicator child_border
-client.focused          #F0C674     #282A2E    #F0C674   #8ABEB7   #F0C674
+#client.focused          #F0C674     #282A2E    #F0C674   #8ABEB7   #F0C674
+client.focused          #F0C674     #282A2E    #F0C674   #F0C674   #F0C674
 client.focused_inactive #373B41     #707880    #C5C8C6   #484e50   #373B41
 client.unfocused        #282A2E     #282A2E    #888888   #292d2e   #282A2E
 client.urgent           #A54242     #900000    #ffffff   #900000   #900000
