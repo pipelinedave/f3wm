@@ -31,7 +31,7 @@ exec --no-startup-id nm-applet
 # Bluetooth applet
 exec_always --no-startup-id blueman-applet
 # Clipboard Manager
-bindsym $mod+v exec "clipmenu -i -fn 'Source Code Pro-14' -nb '#000000' -nf '#C5C8C6' -sb '#F0C674' -sf '#000000'"
+bindsym $mod+v exec "clipmenu -i -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F0C674' -sf '#282828'"
 
 
 ###############################

@@ -8,11 +8,22 @@
 - name: Copy polybar config files
   ansible.builtin.copy:
     src: "roles/polybar/files/"
-    dest: "~/.config/"
+    dest: "~/.config/polybar/"
     directory_mode: '0755'
     mode: '0644'
     remote_src: no
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
-  delegate_to: localhost
-  
+
+- name: Collect scripts
+  ansible.builtin.find:
+    paths: "~/.config/polybar/"
+    patterns: "*.sh"
+    recurse: yes
+  register: scripts
+
+- name: Make scripts executable
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: 'u+x'
+  with_items: "{{ scripts.files }}" 
