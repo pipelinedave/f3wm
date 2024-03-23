@@ -2,6 +2,7 @@
   dnf:
     name:
       - i3
+      - light
     state: present
   become: yes
 

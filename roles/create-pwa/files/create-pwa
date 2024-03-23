@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Check if we got a name and a URL
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <name> <url>"
+    exit 1
+fi
+
+NAME="$1"
+URL="$2"
+
+# Sanitize the name to ensure it's filesystem-friendly
+SAFE_NAME=$(echo "$NAME" | sed 's/[^a-zA-Z0-9]/-/g')
+
+# Define where your Qutebrowser PWA shortcuts will live
+QB_DIR="$HOME/.qutebrowser-pwas"
+PWA_PATH="$QB_DIR/$SAFE_NAME"
+PROFILE_DIR="$PWA_PATH/profile"
+CONFIG_DIR="$PROFILE_DIR/config"
+CONFIG_FILE="$CONFIG_DIR/config.py"
+
+# Create the directories if they don't exist
+mkdir -p "$CONFIG_DIR"
+
+# Create a config.py file for this PWA with specific settings
+{
+    echo "config.load_autoconfig(False)"
+    echo "c.tabs.show = 'never'"
+    echo "c.tabs.tabs_are_windows = True"
+    echo "c.statusbar.show = 'in-mode'"
+#    echo "c.colors.webpage.darkmode.enabled = True"
+    echo "c.colors.webpage.preferred_color_scheme = 'dark'"
+} > "$CONFIG_FILE"
+
+# Create a qutebrowser script for the PWA if it doesn't exist
+if [ ! -f "$PWA_PATH/qutebrowser.sh" ]; then
+    echo "#!/bin/bash" > "$PWA_PATH/qutebrowser.sh"
+    echo "qutebrowser --basedir $PROFILE_DIR \"$URL\" \"\$@\"" >> "$PWA_PATH/qutebrowser.sh"
+    chmod +x "$PWA_PATH/qutebrowser.sh"
+fi
+
+# Link the script to local bin to make it accessible
+ln -sf "$PWA_PATH/qutebrowser.sh" "$HOME/.local/bin/$SAFE_NAME"
+
+echo "PWA for $NAME created. You can now launch it from dmenu with $SAFE_NAME."
