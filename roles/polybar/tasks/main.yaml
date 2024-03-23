@@ -5,6 +5,13 @@
     state: present
   become: yes
 
+- name: Install power-profiles-ctl
+  dnf:
+    name:
+      - power-profiles-daemon
+    state: present
+  become: yes
+
 - name: Copy polybar config files
   ansible.builtin.copy:
     src: "roles/polybar/files/"
