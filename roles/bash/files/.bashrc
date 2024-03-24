@@ -15,6 +15,8 @@ export GTK_USE_PORTAL=1
 
 export PS1="\[\033[01;33m\]\u@\h \W\$\[\033[00m\] "
 
+trap 'echo -ne "\033]0;${BASH_COMMAND}\007"' DEBUG
+
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 

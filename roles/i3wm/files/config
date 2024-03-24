@@ -36,6 +36,8 @@ exec_always --no-startup-id blueman-applet
 bindsym $mod+v exec "clipmenu -i -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F0C674' -sf '#282828'"
 # Encrypted Partition Mount Helper
 bindsym $mod+m exec --no-startup-id "~/.config/i3/scripts/add_encrypted_drives_to_dmenu.sh"
+## Make sure the encrypted partition mount helper terminal window for password prompt is floating
+for_window [class=cryptsetuphelper] floating enable
 
 ###############################
 # Power Profile Control
