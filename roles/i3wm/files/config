@@ -40,8 +40,9 @@ bindsym $mod+m exec --no-startup-id "~/.config/i3/scripts/add_encrypted_drives_t
 for_window [class=cryptsetuphelper] floating enable
 
 # Todo List / Notes hotkey
-#bindsym $mod+n exec --no-startup-id "alacritty -e nvim ~/todo"
-bindsym $mod+n exec --no-startup-id "~/.config/i3/scripts/launch_or_focus_todo.sh"
+#bindsym $mod+n exec --no-startup-id "~/.config/i3/scripts/launch_or_focus_todo.sh"
+bindsym $mod+n exec "~/.config/i3/scripts/scratchpad_nvim.sh"
+for_window [instance="nvim_todo"] move scratchpad, move position 1314 px 594 px, resize set 600 px 600 px
 
 ###############################
 # Power Profile Control
