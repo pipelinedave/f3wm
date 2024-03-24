@@ -3,6 +3,7 @@
     name:
       - i3
       - light
+      - xset
     state: present
   become: yes
 

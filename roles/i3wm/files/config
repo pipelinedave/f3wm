@@ -39,6 +39,10 @@ bindsym $mod+m exec --no-startup-id "~/.config/i3/scripts/add_encrypted_drives_t
 ## Make sure the encrypted partition mount helper terminal window for password prompt is floating
 for_window [class=cryptsetuphelper] floating enable
 
+# Todo List / Notes hotkey
+#bindsym $mod+n exec --no-startup-id "alacritty -e nvim ~/todo"
+bindsym $mod+n exec --no-startup-id "~/.config/i3/scripts/launch_or_focus_todo.sh"
+
 ###############################
 # Power Profile Control
 ###############################
@@ -219,10 +223,10 @@ client.background       #282A2E
 # Custom Commands and Setups
 ###############################
 # Screen setup script
-exec_always --no-startup-id ~/.config/i3/scripts/xrandr_dock_setup.sh
+#exec_always --no-startup-id ~/.config/i3/scripts/xrandr_dock_setup.sh
 
 # Flatpak available in dmenu script
-exec_always --no-startup-id ~/.config/i3/scripts/add_flatpaks_to_dmenu.sh
+#exec_always --no-startup-id ~/.config/i3/scripts/add_flatpaks_to_dmenu.sh
 
 # Custom window behavior for ChatGPT
 #for_window [title="^ChatGPT -"] floating enable, resize set 652 1200, move position 0 0
