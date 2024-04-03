@@ -4,6 +4,8 @@
       - i3
       - light
       - xset
+      - pass
+      - surfraw
     state: present
   become: yes
 

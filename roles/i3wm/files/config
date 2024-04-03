@@ -40,9 +40,20 @@ bindsym $mod+m exec --no-startup-id "~/.config/i3/scripts/add_encrypted_drives_t
 for_window [class=cryptsetuphelper] floating enable
 
 # Todo List / Notes hotkey
-#bindsym $mod+n exec --no-startup-id "~/.config/i3/scripts/launch_or_focus_todo.sh"
 bindsym $mod+n exec "~/.config/i3/scripts/scratchpad_nvim.sh"
-for_window [instance="nvim_todo"] move scratchpad, move position 1314 px 594 px, resize set 600 px 600 px
+for_window [class="nvim_todo"] move scratchpad, move position 1314 px 594 px, resize set 600 px 600 px
+
+# Bash One Liner GPT hotkey
+#bindsym $mod+o exec "~/.config/i3/scripts/scratchpad_bashonelinergpt.sh"
+#for_window [instance="bashonelinergpt"] move scratchpad, move position 1314 px 594 px, resize set 600 px 600 px
+
+# Web Search hotkey
+bindsym $mod+b exec --no-startup-id "~/.config/i3/scripts/dmenu_surfraw.sh google -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#74C6F0' -sf '#282828'"
+
+
+
+# Volume Icon
+exec --no-startup-id volumeicon
 
 ###############################
 # Power Profile Control
@@ -63,7 +74,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 ###############################
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
+set $ws1 "1: main"
 set $ws2 "2"
 set $ws3 "3"
 set $ws4 "4"
@@ -71,8 +82,8 @@ set $ws5 "5"
 set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws9 "9: yt" 
+set $ws10 "10: wa"
 
 # Workspace switching
 bindsym $mod+1 workspace number $ws1
@@ -188,22 +199,31 @@ exec --no-startup-id ~/.config/polybar/i3-layout-event-listener.sh
 for_window [all] title_format "%title"
 # Window icons and borders
 for_window [all] title_window_icon padding 3px
-#for_window [all] border normal 4
 for_window [all] border pixel 1
 # Gaps
 gaps inner 8
-gaps outer -4
+gaps outer -0
 #gaps outer -8
 
 # Colors
 # class                 border      backgr.    text      indicator child_border
-#client.focused          #F0C674     #282A2E    #F0C674   #8ABEB7   #F0C674
 client.focused          #F0C674     #282A2E    #F0C674   #F0C674   #F0C674
-client.focused_inactive #373B41     #707880    #C5C8C6   #484e50   #373B41
-client.unfocused        #282A2E     #282A2E    #888888   #292d2e   #282A2E
+client.focused_inactive #282A2E     #373B41    #C5C8C6   #484e50   #373B41
+client.unfocused        #282A2E     #000000    #C5C8C6   #292d2e   #282A2E
 client.urgent           #A54242     #900000    #ffffff   #900000   #900000
 client.placeholder      #707880     #0c0c0c    #ffffff   #000000   #0c0c0c
 client.background       #282A2E
+
+# Colors
+# class                 border      backgr.    text      indicator child_border
+##client.focused          #F0C674     #282A2E    #F0C674   #8ABEB7   #F0C674
+#client.focused          #F0C674     #282A2E    #F0C674   #F0C674   #F0C674
+#client.focused_inactive #373B41     #707880    #C5C8C6   #484e50   #373B41
+#client.unfocused        #282A2E     #282A2E    #888888   #292d2e   #282A2E
+#client.urgent           #A54242     #900000    #ffffff   #900000   #900000
+#client.placeholder      #707880     #0c0c0c    #ffffff   #000000   #0c0c0c
+#client.background       #282A2E
+
 
 ###############################
 # Mode Configurations
@@ -261,7 +281,7 @@ tiling_drag modifier titlebar
 
 ###############################
 # Workspace Profiles
-###############################
+###############################9
 # Workspace 1 layout and applications
 #exec_always --no-startup-id i3-msg 'workspace 1; append_layout .config/i3/workspace-profiles/workspace_1_layout.json'
 #exec --no-startup-id i3-msg 'workspace 1; exec chatgpt'
@@ -270,6 +290,9 @@ tiling_drag modifier titlebar
 
 # Always have Thunderbird on his own workspace
 for_window [class="thunderbird"] move to workspace $ws9
+
+# Always have whatsapp on his own workspace
+assign [title="WhatsApp - qutebrowser"] $ws9
 
 
 ###############################
