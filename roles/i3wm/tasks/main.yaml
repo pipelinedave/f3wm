@@ -5,6 +5,7 @@
       - light
       - xset
       - pass
+      - passmenu
       - surfraw
     state: present
   become: yes

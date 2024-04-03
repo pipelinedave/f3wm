@@ -51,7 +51,9 @@ for_window [class="nvim_todo"] move scratchpad, move position 1314 px 594 px, re
 bindsym $mod+b exec --no-startup-id "~/.config/i3/scripts/dmenu_surfraw.sh google -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#74C6F0' -sf '#282828'"
 
 # Pass Password Manager hotkey
-bindsym $mod+p exec --no-startup-id "~/.config/i3/scripts/dmenu_pass.sh"
+#bindsym $mod+p exec --no-startup-id "~/.config/i3/scripts/dmenu_pass.sh"
+#bindsym $mod+p exec --no-startup-id "passmenu"
+bindsym $mod+p exec --no-startup-id "passmenu -i -l 10 -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F074C6' -sf '#282828'"
 
 
 # Volume Icon
