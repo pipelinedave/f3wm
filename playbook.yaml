@@ -2,6 +2,7 @@
   hosts: localhost
   connection: local
   roles:
+    - rpmfusion # Add RPM Fusion early
     - i3wm
     - dmenu
     - polybar

@@ -1,10 +1,9 @@
 - name: Install additional dependencies
-  dnf:
+  ansible.builtin.dnf:
     name:
-      - dunst  # For notifications in polybar timer
+      - dunst  # For notifications
       - libnotify  # For notify-send
-      - xsetroot  # For setting background
-      - pins  # For pinned app management (if available)
+      - xsetroot  # For setting X background
     state: present
   become: true
-  ignore_errors: true  # Some packages might not be available
+  # ignore_errors: true # It's better to handle missing packages explicitly or find alternatives

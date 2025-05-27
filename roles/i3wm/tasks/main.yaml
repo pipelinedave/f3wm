@@ -1,42 +1,42 @@
 - name: Install i3wm and dependencies
-  dnf:
+  ansible.builtin.dnf:
     name:
       - i3
       - i3lock
-      - light
-      - xset
-      - pass
-      - passmenu
-      - surfraw
-      - maim
-      - xss-lock
-      - volumeicon
-      - blueman
-      - dex
-      - jq
-      - NetworkManager-applet
+      - light # For screen brightness control
+      - xset # X11 settings utility
+      - pass # Password manager
+      - passmenu # Dmenu interface for pass
+      - surfraw # CLI for web search engines
+      - maim # Screenshot utility
+      - xss-lock # Screen locker helper
+      - volumeicon # Systray volume icon (consider if Polybar handles this)
+      - blueman # Bluetooth manager
+      - dex # Autostart utility
+      - jq # JSON processor
+      - NetworkManager-applet # NetworkManager systray applet
     state: present
   become: true
 
 - name: Copy i3wm config files
   ansible.builtin.copy:
-    src: "roles/i3wm/files/"
-    dest: "~/.config/i3/"
+    src: "files/" # Standard path for role files
+    dest: "{{ ansible_env.HOME }}/.config/i3/"
     directory_mode: '0755'
-    mode: '0644'
-    remote_src: no
+    mode: '0644' # Ensure scripts are not executable yet, handled next
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
 
-- name: Collect scripts
+- name: Collect scripts from i3 config directory
   ansible.builtin.find:
-    paths: "~/.config/i3/"
+    paths: "{{ ansible_env.HOME }}/.config/i3/scripts" # Be more specific if scripts are in a subfolder
     patterns: "*.sh"
     recurse: yes
-  register: scripts
+  register: i3_scripts_to_make_executable
 
-- name: Make scripts executable
+- name: Make i3 scripts executable
   ansible.builtin.file:
     path: "{{ item.path }}"
-    mode: 'u+x'
-  with_items: "{{ scripts.files }}"
+    mode: '0755' # u+x, g+x, o+x
+  with_items: "{{ i3_scripts_to_make_executable.files }}"
+  when: i3_scripts_to_make_executable.matched > 0

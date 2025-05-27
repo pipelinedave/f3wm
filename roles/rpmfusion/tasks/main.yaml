@@ -1,0 +1,22 @@
+---
+- name: Install RPM Fusion free repository
+  ansible.builtin.dnf:
+    name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+    disable_gpg_check: true # GPG key is imported by the RPM package itself
+    state: present
+  become: true
+  when: ansible_distribution == 'Fedora'
+
+- name: Install RPM Fusion nonfree repository
+  ansible.builtin.dnf:
+    name: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+    disable_gpg_check: true # GPG key is imported by the RPM package itself
+    state: present
+  become: true
+  when: ansible_distribution == 'Fedora'
+
+- name: Update package cache after adding RPM Fusion repos
+  ansible.builtin.dnf:
+    update_cache: true
+  become: true
+  when: ansible_distribution == 'Fedora'
