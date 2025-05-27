@@ -1,0 +1,28 @@
+---
+# Storage configuration for encrypted partitions
+# After setting up your new laptop, update these UUIDs by running:
+# sudo blkid -t TYPE=crypto_LUKS
+
+# TODO: Update these UUIDs after partitioning your new laptop
+# backup_partition_uuid: "your-backup-partition-uuid-here"
+# secrets_partition_uuid: "your-secrets-partition-uuid-here" 
+# toast_partition_uuid: "your-toast-partition-uuid-here"
+
+# Example format (remove the # to uncomment after getting real UUIDs):
+# backup_partition_uuid: "12345678-1234-1234-1234-123456789abc"
+# secrets_partition_uuid: "87654321-4321-4321-4321-cba987654321"
+# toast_partition_uuid: "11111111-2222-3333-4444-555555555555"
+
+# User configuration
+username: "{{ ansible_env.USER }}"
+user_home: "{{ ansible_env.HOME }}"
+
+# Font configuration for dmenu
+dmenu_font: "Source Code Pro-14"
+
+# Color scheme for dmenu (Gruvbox-inspired)
+dmenu_colors:
+  normal_bg: "#000000"
+  normal_fg: "#C5C8C6"  
+  selected_bg: "#F0C674"
+  selected_fg: "#000000"
