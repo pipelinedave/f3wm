@@ -37,6 +37,18 @@
     target: install
   become: true
 
+- name: Ensure systemd user directory exists
+  file:
+    path: "~/.config/systemd/user"
+    state: directory
+    mode: '0755'
+
+- name: Copy clipmenud systemd service file
+  ansible.builtin.copy:
+    src: "roles/clipmenu/files/clipmenud.service"
+    dest: "~/.config/systemd/user/clipmenud.service"
+    mode: '0644'
+
 - name: Enable and start clipmenud service for current user
   systemd:
     name: clipmenud

@@ -26,14 +26,19 @@ exec --no-startup-id dex-autostart --autostart --environment i3
 ###############################
 # Set Background to black
 exec_always --no-startup-id xsetroot -solid black
+
 # Lock screen before suspend
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork --color 000000
+
 # NetworkManager system tray GUI
 exec --no-startup-id nm-applet
+
 # Bluetooth applet
 exec_always --no-startup-id blueman-applet
+
 # Clipboard Manager
-bindsym $mod+v exec "clipmenu -i -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F0C674' -sf '#282828'"
+bindsym $mod+v exec "clipmenu -p '[clip]' -i -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F0C674' -sf '#282828'"
+
 # Encrypted Partition Mount Helper
 bindsym $mod+m exec --no-startup-id "~/.config/i3/scripts/add_encrypted_drives_to_dmenu.sh"
 ## Make sure the encrypted partition mount helper terminal window for password prompt is floating
@@ -48,13 +53,13 @@ for_window [class="nvim_todo"] move scratchpad, move position 1314 px 594 px, re
 #for_window [instance="bashonelinergpt"] move scratchpad, move position 1314 px 594 px, resize set 600 px 600 px
 
 # Web Search hotkey
-bindsym $mod+b exec --no-startup-id "~/.config/i3/scripts/dmenu_surfraw.sh google -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#74C6F0' -sf '#282828'"
+bindsym $mod+b exec --no-startup-id "~/.config/i3/scripts/dmenu_surfraw.sh google -fn 'Source Code Pro-14' -nb '#282828' -nf '#74C6F0' -sb '#282828' -sf '#74C6F0'"
 
 # Pass Password Manager hotkey
-#bindsym $mod+p exec --no-startup-id "~/.config/i3/scripts/dmenu_pass.sh"
-#bindsym $mod+p exec --no-startup-id "passmenu"
-bindsym $mod+p exec --no-startup-id "passmenu -i -l 10 -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F074C6' -sf '#282828'"
+bindsym $mod+p exec --no-startup-id "passmenu -p '[pass]' -i -l 10 -fn 'Source Code Pro-14' -nb '#282828' -nf '#C5C8C6' -sb '#F074C6' -sf '#282828'"
 
+# pins (Pinned app management) hotkey
+bindsym $mod+Shift+d exec --no-startup-id "pins"
 
 # Volume Icon
 exec --no-startup-id volumeicon
@@ -78,14 +83,14 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 ###############################
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1: main"
+set $ws1 "1"
 set $ws2 "2"
 set $ws3 "3"
 set $ws4 "4"
 set $ws5 "5"
 set $ws6 "6"
 set $ws7 "7"
-set $ws8 "8"
+set $ws8 "8: cal"
 set $ws9 "9: yt" 
 set $ws10 "10: wa"
 
@@ -175,8 +180,8 @@ bindsym $mod+Control+l resize grow width 5 px or 5 ppt
 ###############################
 # Screen Brightness Controls
 ###############################
-bindsym XF86MonBrightnessUp exec light -A 5
-bindsym XF86MonBrightnessDown exec light -U 5
+bindsym XF86MonBrightnessUp exec light -A 3
+bindsym XF86MonBrightnessDown exec light -U 3
 
 ###############################
 # Screenshot
@@ -291,13 +296,14 @@ tiling_drag modifier titlebar
 #exec --no-startup-id i3-msg 'workspace 1; exec chatgpt'
 #exec --no-startup-id i3-msg 'workspace 1; exec konsole'
 
+# Always have gcalendar on his own workspace
+assign [title="^\[GCALENDAR\].*"] $ws8
 
-# Always have Thunderbird on his own workspace
-for_window [class="thunderbird"] move to workspace $ws9
+# Always have youtube on his own workspace
+assign [title="^\[YOUTUBE\].*"] $ws9
 
 # Always have whatsapp on his own workspace
-assign [title="WhatsApp - qutebrowser"] $ws9
-
+assign [title="^\[WHATSAPP\].*"] $ws10
 
 ###############################
 # Recommendations (Optional)

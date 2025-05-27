@@ -37,10 +37,17 @@ This step will install i3wm, Polybar, and place all the necessary configuration 
 After the playbook runs successfully:
 
 1. **Log out and log back in** (or reboot) to see the changes.
-2. **Configure clipmenu**: The clipmenu service may need manual configuration. If it doesn't start automatically, you can create a user systemd service.
-3. **Check i3wm login**: Make sure to select i3 from your display manager when logging in.
+2. **Select i3 from your display manager** when logging in.
+3. **Configure clipmenu**: The clipmenu systemd service should start automatically.
+4. **Test your setup**: Try the key bindings:
+   - `$mod+d` for dmenu application launcher  
+   - `$mod+v` for clipboard manager
+   - `$mod+Return` for terminal (Alacritty)
+   - `$mod+n` for scratchpad notes
 
 ### Known Issues
 
-- The clipmenu systemd service might not exist by default. You may need to create `~/.config/systemd/user/clipmenud.service` manually if the service fails to start.
+- Some additional packages like `pins` might not be available in all Fedora repositories.
+- If clipmenu doesn't work initially, restart the service: `systemctl --user restart clipmenud`
+- SSH keys setup in `.bashrc` assumes specific key names - adjust if needed.
 

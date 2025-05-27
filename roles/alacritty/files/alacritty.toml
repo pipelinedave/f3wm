@@ -36,4 +36,3 @@ lines = 30
 [window.padding]
 x = 8 # Matched to i3 gaps inner
 y = 8 # Matched to i3 gaps inner
-

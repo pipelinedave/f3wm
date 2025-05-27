@@ -3,9 +3,11 @@
   connection: local
   roles:
     - i3wm
+    - dmenu
     - polybar
     - bash
     - clipmenu
     - alacritty
     - neovim
     - create-pwa
+    - additional-deps

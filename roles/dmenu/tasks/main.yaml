@@ -1,0 +1,6 @@
+- name: Install dmenu
+  dnf:
+    name:
+      - dmenu
+    state: present
+  become: true

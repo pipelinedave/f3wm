@@ -1,12 +1,20 @@
-- name: Install i3wm
+- name: Install i3wm and dependencies
   dnf:
     name:
       - i3
+      - i3lock
       - light
       - xset
       - pass
       - passmenu
       - surfraw
+      - maim
+      - xss-lock
+      - volumeicon
+      - blueman
+      - dex
+      - jq
+      - NetworkManager-applet
     state: present
   become: true
 

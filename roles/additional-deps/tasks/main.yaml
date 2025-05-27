@@ -1,0 +1,10 @@
+- name: Install additional dependencies
+  dnf:
+    name:
+      - dunst  # For notifications in polybar timer
+      - libnotify  # For notify-send
+      - xsetroot  # For setting background
+      - pins  # For pinned app management (if available)
+    state: present
+  become: true
+  ignore_errors: true  # Some packages might not be available
