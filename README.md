@@ -1,138 +1,195 @@
-# f3wm Configuration
+# f3wm - Fedora i3wm Configuration
 
-Welcome to the f3wm project - your Fedora-i3wm blend, crafted to bring the sleekness of i3wm into the robust Fedora environment, spiced up with Polybar for that extra flair.
+Welcome to the f3wm project! This Ansible playbook is designed to configure a Fedora Linux system with the i3wm tiling window manager, Polybar for a feature-rich status bar, and a suite of essential applications and custom scripts for a productive and personalized environment.
 
-## Getting Started
+## Overview
 
-These instructions will get your very own f3wm environment set up and rolling. We'll be using Ansible, so make sure you're somewhat familiar with its rhythms.
+This project automates the setup of:
 
-### Prerequisites
+- i3wm (Window Manager)
+- Polybar (Status Bar)
+- Alacritty (Terminal Emulator)
+- Neovim (Text Editor, with scratchpad functionality)
+- dmenu (Application Launcher)
+- clipmenu (Clipboard Manager)
+- Custom scripts for enhanced workflow (e.g., storage mounting, PWA launching)
+- RPM Fusion repositories for wider software availability
+- LUKS-encrypted BTRFS data partitions (manual setup assisted by Ansible)
 
-Before we hit the play button, make sure you've got the following ready:
+It's primarily targeted for Fedora 39+ (with considerations for Fedora 42 compatibility).
 
-- A Fedora workstation, fresh and clean.
-- Ansible installed (`sudo dnf install ansible` - as simple as a drum beat).
-- Git installed (`sudo dnf install git`).
-- Your soul filled with the love for a minimalist yet functional desktop environment.
+## Prerequisites
 
-### Installation
+- A **fresh Fedora Linux installation** is highly recommended.
+- **Ansible**: `sudo dnf install ansible-core` (or `ansible` if `ansible-core` is not found).
+- **Git**: `sudo dnf install git`.
+- Your user account must have `sudo` privileges (the playbook will use `become` for tasks requiring root access).
+- **Internet connection** for downloading packages and cloning the repository.
 
-Follow these steps to get your environment set up:
+## Installation Steps
 
-1. Clone this repository to your local machine:
+### 1. Clone the Repository
 
-   ```bash
-   git clone <your-repository-url>
-   cd f3wm
-   ```
+```bash
+git clone <your-repository-url> # Replace with your actual repository URL
+cd f3wm
+```
 
-2. Run the Ansible playbook:
+### 2. Plan and Partition Your Storage (Crucial for New Systems with Encrypted Data)
 
-   ```bash
-   ansible-playbook --ask-become-pass playbook.yaml
-   ```
+If you intend to use the encrypted data partition setup (`/backup`, `/secrets`, `/toast`), you **must** partition your drive correctly during the Fedora installation.
 
-This step will install i3wm, Polybar, and place all the necessary configuration files in their rightful places. It will ask for your sudo password - that's your key to the backstage.
+**Recommended Partitioning Scheme (Example for a 1TB NVMe):**
 
-### Post-Installation Notes
+During the Fedora installation, choose **Custom** partitioning:
 
-After the playbook runs successfully:
+1. **EFI System Partition**: 1GB, Mount Point: `/boot/efi`, Type: `FAT32`
+2. **Boot Partition**: 1GB, Mount Point: `/boot`, Type: `ext4`
+3. **Root Partition**: 500GB (adjust as needed), Mount Point: `/`, Type: **BTRFS (unencrypted)**. This will typically include `/home`.
+4. **Data Partition 1 (e.g., Backup)**: 250GB, Type: **BTRFS (unencrypted for now)**. *Do not assign a mount point yet.*
+5. **Data Partition 2 (e.g., Toast)**: 200GB, Type: **BTRFS (unencrypted for now)**. *Do not assign a mount point yet.*
+6. **Data Partition 3 (e.g., Secrets)**: 50GB, Type: **BTRFS (unencrypted for now)**. *Do not assign a mount point yet.*
+7. *(Optional)* Leave any remaining space unallocated for future use.
 
-1. **Log out and log back in** (or reboot) to see the changes.
-2. **Select i3 from your display manager** when logging in.
-3. **Configure clipmenu**: The clipmenu systemd service should start automatically.
-4. **Test your setup**: Try the key bindings:
-   - `$mod+d` for dmenu application launcher  
-   - `$mod+v` for clipboard manager
-   - `$mod+Return` for terminal (Alacritty)
-   - `$mod+n` for scratchpad notes
+**Important Notes on Partitioning:**
 
-### Known Issues
+- Create the data partitions (Backup, Toast, Secrets) as standard BTRFS partitions **without encryption** during the OS installation. We will encrypt them *after* Fedora is installed and the main playbook has run. This approach is generally more reliable.
+- If you are **not** using this encrypted data partition scheme, you can proceed with a simpler partitioning layout. The `storage` role in the playbook is tagged and can be skipped if not needed.
 
-- Some additional packages like `pins` might not be available in all Fedora repositories.
-- If clipmenu doesn't work initially, restart the service: `systemctl --user restart clipmenud`
-- SSH keys setup in `.bashrc` assumes specific key names - adjust if needed.
+**Why BTRFS for NVMe?**
 
-## Storage Setup for New Laptop
+- Built-in compression (e.g., zstd) can reduce write amplification and save space.
+- Copy-on-Write (CoW) is generally more SSD-friendly than traditional journaling.
+- Features like snapshots and better space efficiency for subvolumes.
+- Strong support within Fedora.
 
-This setup includes encrypted storage partitions for `/backup`, `/secrets`, and `/toast` that can be mounted/unmounted via dmenu (`Super+m`).
+### 3. Run the Ansible Playbook
 
-### Partitioning Your New Laptop (1TB NVMe)
+Execute the main playbook. This will install software, copy configuration files, and set up most of the environment.
 
-During Fedora installation, use **Custom** partitioning:
+```bash
+ansible-playbook playbook.yaml --ask-become-pass
+```
 
-1. **EFI System Partition**: 1GB (`/boot/efi`) - FAT32
-2. **Boot Partition**: 1GB (`/boot`) - ext4
-3. **Root Partition**: 500GB (`/`) - **BTRFS, unencrypted** (includes /home)
-4. **Backup**: 250GB - **BTRFS** (encrypt later from desktop)
-5. **Toast**: 200GB - **BTRFS** (encrypt later from desktop)
-6. **Secrets**: 50GB - **BTRFS** (encrypt later from desktop)
-7. **Remaining**: ~200GB - Leave unpartitioned for future use
+You will be prompted for your sudo password.
 
-**Note**: If the installer's encryption option isn't working, just create them as regular BTRFS partitions. We'll encrypt them after installation from the desktop - it's actually easier and more reliable.
+## Post-Playbook Setup: Encrypting Data Partitions
 
-### Why BTRFS for NVMe?
+If you partitioned your drive for encrypted data storage as described in Step 2, follow these manual steps **after** the main Ansible playbook has completed successfully:
 
-- **Built-in compression** (zstd) reduces wear on your SSD
-- **Copy-on-write** is more SSD-friendly than ext4's journaling
-- **Better space efficiency** and **snapshots** capability
-- **Red Hat's future direction** - well supported in Fedora
+### 1. Identify Your Data Partitions
 
-### Post-Installation Storage Setup
+Use `lsblk` to find the device names for the BTRFS partitions you created for Backup, Toast, and Secrets.
 
-After installing Fedora and running the playbook, you'll encrypt the partitions:
+```bash
+sudo lsblk -f
+# Look for your BTRFS partitions (e.g., /dev/nvme0n1p4, /dev/nvme0n1p5, etc.)
+```
 
-1. **First, identify your partitions**:
+### 2. Encrypt Each Data Partition
 
-   ```bash
-   sudo lsblk
-   # Look for your backup, toast, and secrets partitions (probably /dev/nvme0n1p4, p5, p6)
-   ```
+For each partition you intend to encrypt (e.g., `/dev/nvme0n1pX`):
 
-2. **Encrypt each partition** (backup data first if any exists):
+```bash
+# Example for the 'backup' partition. Adjust device name and LUKS mapping name.
+sudo umount /dev/nvme0n1pX  # If it was auto-mounted
+sudo cryptsetup luksFormat /dev/nvme0n1pX
+# Enter YES (in uppercase) and set a strong passphrase when prompted.
 
-   ```bash
-   # Example for backup partition (adjust device names as needed)
-   sudo umount /dev/nvme0n1p4  # if mounted
-   sudo cryptsetup luksFormat /dev/nvme0n1p4
-   sudo cryptsetup luksOpen /dev/nvme0n1p4 backup
-   sudo mkfs.btrfs -L backup /dev/mapper/backup
-   sudo cryptsetup luksClose backup
-   
-   # Repeat for toast and secrets partitions with different names
-   ```
+sudo cryptsetup luksOpen /dev/nvme0n1pX backup_crypt
+# 'backup_crypt' is the temporary name for the mapped device. Choose unique names.
 
-3. **Find your new partition UUIDs**:
+sudo mkfs.btrfs -L backup /dev/mapper/backup_crypt
+# This formats the encrypted container with BTRFS and sets the label 'backup'.
 
-   ```bash
-   sudo blkid -t TYPE=crypto_LUKS
-   ```
+sudo cryptsetup luksClose backup_crypt
 
-4. **Update the storage configuration**:
+# Repeat for 'toast' (e.g., luksOpen as 'toast_crypt', mkfs.btrfs -L 'toast')
+# Repeat for 'secrets' (e.g., luksOpen as 'secrets_crypt', mkfs.btrfs -L 'secrets')
+```
 
-   Edit `group_vars/all.yml` and uncomment/update these lines:
+### 3. Obtain LUKS Partition UUIDs
 
-   ```yaml
-   backup_partition_uuid: "your-backup-uuid-here"
-   secrets_partition_uuid: "your-secrets-uuid-here"
-   toast_partition_uuid: "your-toast-uuid-here"
-   ```
+Get the UUIDs of the newly LUKS-formatted partitions:
 
-5. **Re-run the storage role**:
+```bash
+sudo blkid -t TYPE=crypto_LUKS
+```
 
-   ```bash
-   ansible-playbook playbook.yaml --tags storage --ask-become-pass
-   ```
+Copy the UUID values for your backup, toast, and secrets partitions.
 
-6. **Test the mount script**:
+### 4. Update Ansible Group Variables
 
-   ```bash
-   ~/.local/bin/storage-mount-helper.sh test backup
-   ```
+Edit the `group_vars/all.yml` file in your cloned repository:
 
-### Storage Key Bindings
+```yaml
+# group_vars/all.yml
+# Ensure these are uncommented and have the correct UUIDs from the blkid command
+# backup_partition_uuid: "YOUR-BACKUP-PARTITION-UUID-HERE"
+# secrets_partition_uuid: "YOUR-SECRETS-PARTITION-UUID-HERE"
+# toast_partition_uuid: "YOUR-TOAST-PARTITION-UUID-HERE"
+```
 
-- `Super+m`: Open mount/unmount dmenu for encrypted partitions
-- The script will show `[mounted]` or `[unmounted]` status for each partition
-- Mounting will prompt for encryption password in a new terminal
-- Unmounting will safely close the LUKS container
+Replace the placeholder UUIDs with the actual UUIDs you obtained.
+
+### 5. Re-run the Ansible 'storage' Role
+
+This will configure `/etc/crypttab` and `/etc/fstab` to automatically manage and mount your encrypted partitions using the UUIDs.
+
+```bash
+ansible-playbook playbook.yaml --tags storage --ask-become-pass
+```
+
+### 6. Reboot and Test
+
+Reboot your system. After logging back into i3, your encrypted partitions should not be mounted automatically but should be ready for on-demand mounting.
+
+Test the storage mount helper script (default keybinding `Super+m`):
+
+- This should open a dmenu prompt listing your configured encrypted partitions (`backup`, `secrets`, `toast`).
+- Selecting a partition will prompt for its LUKS passphrase in a new terminal.
+- Once mounted, they will be accessible at `/mnt/backup`, `/mnt/secrets`, and `/mnt/toast`.
+- Selecting a mounted partition from the dmenu will offer to unmount it.
+
+You can also test the helper script directly:
+
+```bash
+~/.local/bin/storage-mount-helper.sh test backup
+```
+
+## Usage and Key Functionality
+
+- **Login**: After the playbook runs and you've rebooted, select "i3" from your display manager's session menu.
+- **Keybindings (Common)**:
+  - `$mod+Return`: Open Alacritty terminal.
+  - `$mod+d`: Launch application dmenu.
+  - `$mod+v`: Launch clipmenu (clipboard history).
+  - `$mod+n`: Toggle Neovim scratchpad terminal.
+  - `$mod+m`: Open dmenu for mounting/unmounting encrypted storage.
+  - `$mod+Shift+s`: Take a screenshot (using `maim`).
+  - *(Refer to `roles/i3wm/files/config` for the full list of i3 keybindings).*
+- **Polybar**: Provides workspace indicators, system tray, i3 layout/mode, power profile switcher, date/time, etc.
+- **Custom Scripts**: Various scripts are copied to `~/.config/i3/scripts/` and `~/.local/bin/` to enhance functionality.
+
+## Customization
+
+- **i3wm Configuration**: `roles/i3wm/files/config`
+- **Polybar Configuration**: `roles/polybar/files/config.ini` and associated scripts in `roles/polybar/files/`.
+- **Alacritty Configuration**: `roles/alacritty/files/alacritty.toml`
+- **Neovim Configuration**: `roles/neovim/files/nvim/init.vim`
+- **Adding Custom Scripts**:
+    1. Place script files in `roles/i3wm/files/scripts/` (for i3-specific scripts) or create a new role for more general scripts.
+    2. Ensure the `i3wm` role (or your new role) copies them to an appropriate location (e.g., `~/.config/i3/scripts/` or `~/.local/bin/`).
+    3. Make them executable using the `ansible.builtin.file` module with `mode: '0755'`.
+    4. Update your i3 config (`roles/i3wm/files/config`) to bind them to keys if needed.
+
+## Troubleshooting and Known Points
+
+- **Clipmenu Service**: The `clipmenud.service` (systemd user service) should be enabled and started by the `clipmenu` role. If you encounter issues, check its status: `systemctl --user status clipmenud.service` and logs: `journalctl --user -u clipmenud.service`.
+- **SSH Key Paths in `.bashrc`**: The `.bashrc` copied by the `bash` role might have example SSH agent setup. If you use non-standard SSH key names or paths, you may need to adjust `roles/bash/files/.bashrc` accordingly before running the playbook or modify `~/.bashrc` post-installation.
+- **Idempotency**: The playbook is designed to be idempotent, meaning it can be run multiple times without adverse effects. However, for the initial setup, a fresh Fedora installation is recommended.
+- **Fedora Versioning**: While designed with Fedora 39/42 in mind, package names or availability can change between Fedora releases. The `rpmfusion` role attempts to handle repository versions dynamically.
+
+---
+
+This README should provide a much clearer guide. Let me know if you want any sections expanded or clarified further!
