@@ -159,7 +159,9 @@ You can also test the helper script directly:
 
 ## Usage and Key Functionality
 
-- **Login**: After the playbook runs and you've rebooted, select "i3" from your display manager's session menu.
+- **Login**:
+  - **Default (with Display Manager, e.g., GDM)**: After the playbook runs and you've rebooted, select "i3" from your display manager's session menu.
+  - **Alternative (Bypassing Display Manager with `startx`)**: If you prefer to bypass a display manager like GDM and start i3 manually from a text console (TTY), see the section "Bypassing the Display Manager (Optional)" below.
 - **Keybindings (Common)**:
   - `$mod+Return`: Open Alacritty terminal.
   - `$mod+d`: Launch application dmenu.
@@ -185,10 +187,57 @@ You can also test the helper script directly:
 
 ## Troubleshooting and Known Points
 
+- **Display Manager Issues (e.g., i3 not listed in GDM)**:
+  - Ensure the `i3.desktop` file exists in `/usr/share/xsessions/`.
+  - Verify that `xorg-x11-server-Xorg` is installed. The playbook now explicitly includes this.
+  - If issues persist with GDM, consider the `startx` method described below.
 - **Clipmenu Service**: The `clipmenud.service` (systemd user service) should be enabled and started by the `clipmenu` role. If you encounter issues, check its status: `systemctl --user status clipmenud.service` and logs: `journalctl --user -u clipmenud.service`.
 - **SSH Key Paths in `.bashrc`**: The `.bashrc` copied by the `bash` role might have example SSH agent setup. If you use non-standard SSH key names or paths, you may need to adjust `roles/bash/files/.bashrc` accordingly before running the playbook or modify `~/.bashrc` post-installation.
 - **Idempotency**: The playbook is designed to be idempotent, meaning it can be run multiple times without adverse effects. However, for the initial setup, a fresh Fedora installation is recommended.
 - **Fedora Versioning**: While designed with Fedora 39/42 in mind, package names or availability can change between Fedora releases. The `rpmfusion` role attempts to handle repository versions dynamically.
+
+## Bypassing the Display Manager (Optional - Using `startx`)
+
+If you prefer a more minimal setup or encounter issues with your display manager (like GDM) not showing the i3 session, you can configure your system to boot directly to a text console (TTY) and start i3 manually using `startx`.
+
+**Prerequisites for this method:**
+- The packages `xorg-x11-server-Xorg` (the X server itself) and `xorg-x11-xinit` (which provides `startx`) must be installed. The playbook's `i3wm` role now ensures these are installed.
+
+**Configuration Steps:**
+
+1.  **Create `~/.xinitrc` file:**
+    This file tells `startx` which window manager to launch.
+    ```bash
+    echo "exec i3" > ~/.xinitrc
+    chmod +x ~/.xinitrc
+    ```
+
+2.  **Disable the Display Manager Service (e.g., GDM):**
+    This prevents the graphical login screen from starting automatically.
+    ```bash
+    sudo systemctl disable gdm.service  # Replace 'gdm.service' if you use a different display manager
+    ```
+
+3.  **Set Default Boot Target to Text Mode:**
+    This instructs the system to boot into a multi-user text console.
+    ```bash
+    sudo systemctl set-default multi-user.target
+    ```
+
+4.  **Reboot:**
+    ```bash
+    sudo reboot
+    ```
+
+**After Rebooting:**
+- Your system will boot to a text-based login prompt.
+- Log in with your username and password.
+- Type `startx` and press Enter to launch your i3 session.
+
+**To Revert to Using a Display Manager:**
+1.  Enable the display manager service: `sudo systemctl enable gdm.service`
+2.  Set the default target back to graphical: `sudo systemctl set-default graphical.target`
+3.  Reboot. You can remove or rename `~/.xinitrc` if desired, but it's not strictly necessary if the display manager is active.
 
 ---
 
