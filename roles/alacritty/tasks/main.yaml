@@ -20,4 +20,3 @@
     mode: '0644'
   become: true # Changed from yes to true
   become_user: "{{ ansible_env.USER }}" # Changed from yes to true
-

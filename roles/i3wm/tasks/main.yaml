@@ -31,7 +31,7 @@
   ansible.builtin.find:
     paths: "{{ ansible_env.HOME }}/.config/i3/scripts" # Be more specific if scripts are in a subfolder
     patterns: "*.sh"
-    recurse: yes
+    recurse: true
   register: i3_scripts_to_make_executable
 
 - name: Make i3 scripts executable

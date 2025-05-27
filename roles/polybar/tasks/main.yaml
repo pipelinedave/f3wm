@@ -26,7 +26,7 @@
   ansible.builtin.find:
     paths: "{{ ansible_env.HOME }}/.config/polybar/"
     patterns: "*.sh"
-    recurse: yes # Set to no if scripts are only in the top directory
+    recurse: true # Set to no if scripts are only in the top directory
   register: polybar_scripts_to_make_executable
 
 - name: Make polybar scripts executable

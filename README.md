@@ -9,6 +9,7 @@ These instructions will get your very own f3wm environment set up and rolling. W
 ### Prerequisites
 
 Before we hit the play button, make sure you've got the following ready:
+
 - A Fedora workstation, fresh and clean.
 - Ansible installed (`sudo dnf install ansible` - as simple as a drum beat).
 - Git installed (`sudo dnf install git`).
@@ -19,6 +20,7 @@ Before we hit the play button, make sure you've got the following ready:
 Follow these steps to get your environment set up:
 
 1. Clone this repository to your local machine:
+
    ```bash
    git clone <your-repository-url>
    cd f3wm
@@ -101,6 +103,7 @@ After installing Fedora and running the playbook, you'll encrypt the partitions:
    ```
 
 3. **Find your new partition UUIDs**:
+
    ```bash
    sudo blkid -t TYPE=crypto_LUKS
    ```
@@ -133,4 +136,3 @@ After installing Fedora and running the playbook, you'll encrypt the partitions:
 - The script will show `[mounted]` or `[unmounted]` status for each partition
 - Mounting will prompt for encryption password in a new terminal
 - Unmounting will safely close the LUKS container
-

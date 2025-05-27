@@ -5,6 +5,7 @@
       - dunst  # For notifications
       - libnotify  # For notify-send
       - xsetroot  # For setting X background
+      - wl-clipboard
     state: present
   become: true
   # ignore_errors: true # It's better to handle missing packages explicitly or find alternatives

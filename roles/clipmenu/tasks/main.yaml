@@ -66,4 +66,3 @@
     enabled: true # Changed from yes
     scope: user
     daemon_reload: true # Changed from yes
-
