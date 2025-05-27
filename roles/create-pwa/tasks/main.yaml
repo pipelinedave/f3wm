@@ -3,3 +3,4 @@
     src: roles/create-pwa/files/create-pwa
     dest: /usr/local/bin/create-pwa
     mode: '0755'
+  become: true

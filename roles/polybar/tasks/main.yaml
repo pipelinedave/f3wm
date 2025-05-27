@@ -3,14 +3,14 @@
     name:
       - polybar
     state: present
-  become: yes
+  become: true
 
 - name: Install power-profiles-ctl
   dnf:
     name:
       - power-profiles-daemon
     state: present
-  become: yes
+  become: true
 
 - name: Copy polybar config files
   ansible.builtin.copy:

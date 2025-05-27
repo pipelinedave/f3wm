@@ -7,7 +7,7 @@
       - libX11-devel
       - xsel
     state: present
-  become: yes
+  become: true
 
 - name: Clone clipnotify from GitHub
   git:
@@ -15,13 +15,13 @@
     dest: '~/clipnotify'
     clone: yes
     update: yes
-  become: yes
+  become: true
 
 - name: Compile and install clipnotify
   make:
     chdir: '~/clipnotify'
     target: install
-  become: yes
+  become: true
 
 - name: Clone clipmenu from GitHub
   git:
@@ -29,13 +29,13 @@
     dest: '~/clipmenu'
     clone: yes
     update: yes
-  become: yes
+  become: true
 
 - name: Compile and install clipmenu
   make:
     chdir: '~/clipmenu'
     target: install
-  become: yes
+  become: true
 
 - name: Enable and start clipmenud service for current user
   systemd:

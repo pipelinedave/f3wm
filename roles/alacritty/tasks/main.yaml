@@ -2,7 +2,7 @@
   dnf:
     name: alacritty
     state: present
-  become: yes
+  become: true
 
 - name: Ensure Alacritty config directory exists
   file:

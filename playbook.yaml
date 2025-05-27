@@ -1,5 +1,6 @@
 - name: Set up i3wm and polybar with configs
   hosts: localhost
+  connection: local
   roles:
     - i3wm
     - polybar

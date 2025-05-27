@@ -2,7 +2,7 @@
   dnf:
     name: neovim
     state: present
-  become: yes
+  become: true
 
 - name: Copy Neovim config files
   ansible.builtin.copy:
