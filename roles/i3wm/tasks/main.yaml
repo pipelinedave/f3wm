@@ -12,9 +12,9 @@
       - xss-lock # Screen locker helper
       - volumeicon # Systray volume icon (consider if Polybar handles this)
       - blueman # Bluetooth manager
-      - dex # Autostart utility
+      - dex-autostart # Autostart utility
       - jq # JSON processor
-      - NetworkManager-applet # NetworkManager systray applet
+      - network-manager-applet # NetworkManager systray applet
     state: present
   become: true
 
