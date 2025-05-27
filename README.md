@@ -201,43 +201,50 @@ You can also test the helper script directly:
 If you prefer a more minimal setup or encounter issues with your display manager (like GDM) not showing the i3 session, you can configure your system to boot directly to a text console (TTY) and start i3 manually using `startx`.
 
 **Prerequisites for this method:**
+
 - The packages `xorg-x11-server-Xorg` (the X server itself) and `xorg-x11-xinit` (which provides `startx`) must be installed. The playbook's `i3wm` role now ensures these are installed.
 
 **Configuration Steps:**
 
-1.  **Create `~/.xinitrc` file:**
+1. **Create `~/.xinitrc` file:**
     This file tells `startx` which window manager to launch.
+
     ```bash
     echo "exec i3" > ~/.xinitrc
     chmod +x ~/.xinitrc
     ```
 
-2.  **Disable the Display Manager Service (e.g., GDM):**
+2. **Disable the Display Manager Service (e.g., GDM):**
     This prevents the graphical login screen from starting automatically.
+
     ```bash
     sudo systemctl disable gdm.service  # Replace 'gdm.service' if you use a different display manager
     ```
 
-3.  **Set Default Boot Target to Text Mode:**
+3. **Set Default Boot Target to Text Mode:**
     This instructs the system to boot into a multi-user text console.
+
     ```bash
     sudo systemctl set-default multi-user.target
     ```
 
-4.  **Reboot:**
+4. **Reboot:**
+
     ```bash
     sudo reboot
     ```
 
 **After Rebooting:**
+
 - Your system will boot to a text-based login prompt.
 - Log in with your username and password.
 - Type `startx` and press Enter to launch your i3 session.
 
 **To Revert to Using a Display Manager:**
-1.  Enable the display manager service: `sudo systemctl enable gdm.service`
-2.  Set the default target back to graphical: `sudo systemctl set-default graphical.target`
-3.  Reboot. You can remove or rename `~/.xinitrc` if desired, but it's not strictly necessary if the display manager is active.
+
+1. Enable the display manager service: `sudo systemctl enable gdm.service`
+2. Set the default target back to graphical: `sudo systemctl set-default graphical.target`
+3. Reboot. You can remove or rename `~/.xinitrc` if desired, but it's not strictly necessary if the display manager is active.
 
 ---
 
