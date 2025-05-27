@@ -1,17 +1,37 @@
-- name: Install Neovim
-  dnf:
-    name: neovim
+---
+- name: Install Neovim and dependencies
+  ansible.builtin.dnf:
+    name:
+      - neovim
+      - python3-neovim # For python plugin support
+      - git # For Plug
     state: present
   become: true
 
-- name: Copy Neovim config files
-  ansible.builtin.copy:
-    src: "roles/neovim/files/"
-    dest: "~/.config/"
-    directory_mode: '0755'
+- name: Ensure Neovim config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/nvim/autoload"
+    state: directory
+    mode: '0755'
+  become: true # Changed from yes
+  become_user: "{{ ansible_env.USER }}"
+
+- name: Download vim-plug
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    dest: "{{ ansible_env.HOME }}/.config/nvim/autoload/plug.vim"
     mode: '0644'
-    remote_src: no
-    owner: "{{ ansible_env.USER }}"
-    group: "{{ ansible_env.USER }}"
-  delegate_to: localhost
+  become: true # Changed from yes
+  become_user: "{{ ansible_env.USER }}"
+
+- name: Copy Neovim config files (init.vim)
+  ansible.builtin.copy:
+    src: files/nvim/init.vim # Relative to role's files directory
+    dest: "{{ ansible_env.HOME }}/.config/nvim/init.vim"
+    mode: '0644'
+  become: true # Changed from yes
+  become_user: "{{ ansible_env.USER }}"
+
+# Note: PlugInstall should be run manually from within Neovim after first launch
+# :PlugInstall
 

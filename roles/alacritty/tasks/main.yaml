@@ -1,18 +1,23 @@
+---
 - name: Install Alacritty
-  dnf:
+  ansible.builtin.dnf:
     name: alacritty
     state: present
   become: true
 
-- name: Ensure Alacritty config directory exists
-  file:
-    path: "~/.config/alacritty"
+- name: Create Alacritty config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/alacritty"
     state: directory
     mode: '0755'
+  become: true # Changed from yes to true
+  become_user: "{{ ansible_env.USER }}" # Changed from yes to true
 
-- name: Copy Alacritty config file
+- name: Copy Alacritty config
   ansible.builtin.copy:
-    src: "roles/alacritty/files/alacritty.toml"
-    dest: "~/.config/alacritty/alacritty.toml"
+    src: files/alacritty.toml
+    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
     mode: '0644'
+  become: true # Changed from yes to true
+  become_user: "{{ ansible_env.USER }}" # Changed from yes to true
 

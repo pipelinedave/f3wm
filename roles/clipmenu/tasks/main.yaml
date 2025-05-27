@@ -1,59 +1,69 @@
+---
 - name: Install required packages for clipmenu and clipnotify
-  dnf:
+  ansible.builtin.dnf:
     name:
       - gcc
       - make
       - libXfixes-devel
       - libX11-devel
       - xsel
+      - git # Added git as it is used for cloning
     state: present
   become: true
 
 - name: Clone clipnotify from GitHub
-  git:
+  ansible.builtin.git:
     repo: 'https://github.com/cdown/clipnotify.git'
-    dest: '~/clipnotify'
-    clone: yes
-    update: yes
-  become: true
+    dest: "{{ ansible_env.HOME }}/clipnotify"
+    clone: true # Changed from yes
+    update: true # Changed from yes
+    version: master # Explicitly track master, or a specific tag/commit
+  become: true # Consider if become is needed if dest is user's home
+  # We can ignore the latest[git] warning for this utility if we always want the latest from master.
+  # ansible-lint-ignore latest[git]
 
 - name: Compile and install clipnotify
-  make:
-    chdir: '~/clipnotify'
+  community.general.make:
+    chdir: "{{ ansible_env.HOME }}/clipnotify"
     target: install
   become: true
 
 - name: Clone clipmenu from GitHub
-  git:
+  ansible.builtin.git:
     repo: 'https://github.com/cdown/clipmenu.git'
-    dest: '~/clipmenu'
-    clone: yes
-    update: yes
-  become: true
+    dest: "{{ ansible_env.HOME }}/clipmenu"
+    clone: true # Changed from yes
+    update: true # Changed from yes
+    version: master # Explicitly track master, or a specific tag/commit
+  become: true # Consider if become is needed if dest is user's home
+  # We can ignore the latest[git] warning for this utility if we always want the latest from master.
+  # ansible-lint-ignore latest[git]
 
 - name: Compile and install clipmenu
-  make:
-    chdir: '~/clipmenu'
+  community.general.make:
+    chdir: "{{ ansible_env.HOME }}/clipmenu"
     target: install
   become: true
 
 - name: Ensure systemd user directory exists
-  file:
-    path: "~/.config/systemd/user"
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/systemd/user"
     state: directory
     mode: '0755'
+  # No become needed if path is in user's home and owned by user
 
 - name: Copy clipmenud systemd service file
   ansible.builtin.copy:
-    src: "roles/clipmenu/files/clipmenud.service"
-    dest: "~/.config/systemd/user/clipmenud.service"
+    src: files/clipmenud.service # Ansible automatically looks in role's files dir
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/clipmenud.service"
     mode: '0644'
+  # No become needed if path is in user's home and owned by user
 
 - name: Enable and start clipmenud service for current user
-  systemd:
+  ansible.builtin.systemd:
     name: clipmenud
     state: started
-    enabled: yes
+    enabled: true # Changed from yes
     scope: user
-    daemon_reload: yes
+    daemon_reload: true # Changed from yes
 

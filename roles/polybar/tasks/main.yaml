@@ -1,12 +1,13 @@
+---
 - name: Install polybar
-  dnf:
+  ansible.builtin.dnf:
     name:
       - polybar
     state: present
   become: true
 
-- name: Install power-profiles-ctl
-  dnf:
+- name: Install power-profiles-daemon for power profile switching
+  ansible.builtin.dnf:
     name:
       - power-profiles-daemon
     state: present
@@ -14,23 +15,23 @@
 
 - name: Copy polybar config files
   ansible.builtin.copy:
-    src: "roles/polybar/files/"
-    dest: "~/.config/polybar/"
+    src: files/ # Ansible automatically looks in role's files dir
+    dest: "{{ ansible_env.HOME }}/.config/polybar/"
     directory_mode: '0755'
-    mode: '0644'
-    remote_src: no
+    mode: '0644' # Scripts made executable in next task
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
 
-- name: Collect scripts
+- name: Collect scripts from polybar config directory
   ansible.builtin.find:
-    paths: "~/.config/polybar/"
+    paths: "{{ ansible_env.HOME }}/.config/polybar/"
     patterns: "*.sh"
-    recurse: yes
-  register: scripts
+    recurse: yes # Set to no if scripts are only in the top directory
+  register: polybar_scripts_to_make_executable
 
-- name: Make scripts executable
+- name: Make polybar scripts executable
   ansible.builtin.file:
     path: "{{ item.path }}"
-    mode: 'u+x'
-  with_items: "{{ scripts.files }}" 
+    mode: '0755' # u+x, g+x, o+x
+  with_items: "{{ polybar_scripts_to_make_executable.files }}"
+  when: polybar_scripts_to_make_executable.matched > 0

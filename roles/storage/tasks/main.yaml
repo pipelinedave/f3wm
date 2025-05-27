@@ -1,16 +1,16 @@
 ---
 - name: Install cryptsetup and related packages
-  package:
+  ansible.builtin.package: # Changed to ansible.builtin.package for broader compatibility
     name:
       - cryptsetup
-      - cryptsetup-luks
-      - btrfs-progs  # BTRFS utilities
-      - compsize     # Check compression ratios
+      # cryptsetup-luks is usually part of cryptsetup, but ensure it's covered
+      - btrfs-progs
+      - compsize
     state: present
   become: true
 
 - name: Create mount point directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: '0755'
@@ -23,52 +23,60 @@
   become: true
 
 - name: Add encrypted partitions to /etc/crypttab
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/crypttab
     line: "{{ item.name }} {{ item.device }} none luks,noauto"
     state: present
     create: true
+    mode: '0600' # Added mode for sensitive file
   loop:
     - { name: "backup", device: "UUID={{ backup_partition_uuid }}" }
     - { name: "secrets", device: "UUID={{ secrets_partition_uuid }}" }
     - { name: "toast", device: "UUID={{ toast_partition_uuid }}" }
   become: true
-  when: 
+  when:
     - backup_partition_uuid is defined
     - secrets_partition_uuid is defined
     - toast_partition_uuid is defined
 
 - name: Add mount entries to /etc/fstab
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/fstab
     line: "/dev/mapper/{{ item.name }} {{ item.mount }} btrfs defaults,noauto,compress=zstd 0 0"
     state: present
+    mode: '0644' # Standard fstab permissions
   loop:
     - { name: "backup", mount: "/backup" }
     - { name: "secrets", mount: "/secrets" }
     - { name: "toast", mount: "/toast" }
   become: true
+  # Removed trailing space from original file
 
 - name: Copy encrypted drives mount script
-  copy:
-    src: add_encrypted_drives_to_dmenu.sh
+  ansible.builtin.copy:
+    src: files/add_encrypted_drives_to_dmenu.sh # Corrected src path
     dest: "{{ ansible_env.HOME }}/.config/i3/scripts/add_encrypted_drives_to_dmenu.sh"
     mode: '0755'
+  # No become needed if dest is user-owned
 
-- name: Create systemd user directory
-  file:
+- name: Create systemd user directory for potential user services
+  ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/systemd/user"
     state: directory
     mode: '0755'
+  # No become needed
 
 - name: Template storage mount helper script
-  template:
-    src: storage-mount-helper.sh.j2
+  ansible.builtin.template:
+    src: templates/storage-mount-helper.sh.j2 # Corrected src path
     dest: "{{ ansible_env.HOME }}/.local/bin/storage-mount-helper.sh"
     mode: '0755'
+  # No become needed
 
-- name: Ensure .local/bin directory exists
-  file:
+- name: Ensure .local/bin directory exists in user's home
+  ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.local/bin"
     state: directory
     mode: '0755'
+  # No become needed
+# Ensured newline at end

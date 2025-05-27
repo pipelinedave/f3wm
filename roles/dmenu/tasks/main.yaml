@@ -1,6 +1,6 @@
+---
 - name: Install dmenu
-  dnf:
-    name:
-      - dmenu
+  ansible.builtin.dnf:
+    name: dmenu
     state: present
   become: true
